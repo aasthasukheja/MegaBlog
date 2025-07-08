@@ -1,5 +1,5 @@
-import conf from '../conf.js';
-import {client, Account, ID, Client } from "appwrite";
+import conf from '../conf/conf.js';
+import { Account, ID, Client } from "appwrite";
 
 export class AuthService {
     client = new Client();
@@ -25,6 +25,7 @@ export class AuthService {
             }
 
         } catch(error){
+            console.error("❌ Error in createAccount:", error);
             throw error;
         }
     }
@@ -34,6 +35,7 @@ export class AuthService {
         try{
             return await this.account.createEmailPasswordSession(email, password);
         } catch(error){
+            console.error("❌ Error in login:", error);
             throw error;
         }
     }
@@ -42,20 +44,20 @@ export class AuthService {
         try{
             return await this.account.get();
 
-        } catch(error){
-            throw error;
+        } catch(error) {
+            console.warn("⚠️ No active user session or error in getCurrentUser");
+            console.error(error);
+            return null;
         }
-
-        return null;
     }
 
     async logout(){
         try{
             await this.account.deleteSessions();
 
-        } catch(error){
+        } catch(error) {
+            console.error("❌ Error in logout:", error);
             throw error;
-
         }
     }
 }
